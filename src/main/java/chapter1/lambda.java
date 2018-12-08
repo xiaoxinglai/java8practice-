@@ -1,19 +1,17 @@
-# java8practice-
-# java8练习
+package chapter1;
 
-## 章节一 java8入门
-
-### 使用lambda优化代码
-```
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * java 8
  *  方法引用 lambda表达式   流和默认方法
  *  传递代码
  */
-public class chapter1 {
+public class lambda {
 
-  
+    //java8里面 :: 表示 方法引用
+
     //例如一个查找指定颜色为绿色要求的苹果的方法
 
     public static List<Apple> filterGreenApples(List<Apple> inventory){
@@ -91,15 +89,21 @@ public class chapter1 {
             }
         });
         //java8之前 这种方式也是有的，比如说compare接口，就是要自己去实现一个
-        
-        //java8里面 :: 表示 方法引用
+
         //java8版本之后  使用方法引用
-        filterApples(inventory,chapter1::isGreenApple); //原理就是自动生成了一个内部类 然后用isGreenApple重写了test方法
+        filterApples(inventory, lambda::isGreenApple); //原理就是自动生成了一个内部类 然后用isGreenApple重写了test方法
 
 
         //java 8版本之后 还可以用lambda来写，本质也是一种内部类   (参数)->返回值
         filterApples(inventory,(Apple a)->"green".equals(a.getColor()));  //这种写法 比之前的所有都方便
+
+
+
+
+
+
     }
+
 
 
      class Apple {
@@ -126,80 +130,6 @@ public class chapter1 {
 
     }
 
+
+
 }
-
-
-```
-
-### 使用流筛选数据
-```
-package chapter1;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
-
-public class stream {
-    //比如说 你需要在一个列表中 筛选出所以重量大于150的苹果，然后按照颜色分组
-    //按常规的筛选写法 就是在循环里面 迭代筛选
-
-    public static void main(String[] args) {
-        List<Apple> appleList = new ArrayList<>();
-
-        //常规写法
-        Map<String, List<Apple>> AppMap = new HashMap<>();
-        for (Apple apple : appleList) {
-            if (apple.getWeight() > 150) { //如果重量大于150
-                if (AppMap.get(apple.getColor()) == null) { //该颜色还没分类
-                    List<Apple> list = new ArrayList<>(); //新建该颜色的列表
-                    list.add(apple);//将苹果放进去列表
-                    AppMap.put(apple.getColor(),list);//将列表放到map中
-                }else { //该颜色分类已存在
-                    AppMap.get(apple.getColor()).add(apple);//该颜色分类已存在，则直接放进去即可
-                }
-            }
-        }
-
-        //如上方式 就可以筛选出来所有的150克大小以上的苹果，并按颜色分类
-
-
-
-        //方式二 使用java8提供的流api实现 这种叫内部迭代
-        Map<String, List<Apple>> AppMap2=appleList.stream().filter((Apple a)->a.getWeight()>150) //筛选出大于150的
-                .collect(groupingBy(Apple::getColor)); //按颜色分组  最后得到map
-        
-
-    }
-
-
-    class Apple {
-
-        private String color;//颜色
-        private Integer weight; //重量
-
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color) {
-            this.color = color;
-        }
-
-        public Integer getWeight() {
-            return weight;
-        }
-
-        public void setWeight(Integer weight) {
-            this.weight = weight;
-        }
-
-
-    }
-}
-
-```
-
-
